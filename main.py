@@ -1,22 +1,45 @@
-from typing import Dict, Union
-
+from typing import Dict
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+import os
 
 app = FastAPI()
 
+BACKEND_API_URL = os.environ.get("BACKEND_URL")
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
-BACKEND_API_URL = "https://shelfi-backend-app-dhpri.ondigitalocean.app/api/confirm/getdata/"
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Shelfi</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+            }
+            h1 {
+                font-size: 3em;
+                color: #333;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Shelfi</h1>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 @app.post("/forward")
 def forward_data(payload: Dict):
